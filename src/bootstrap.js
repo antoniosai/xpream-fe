@@ -18,20 +18,13 @@ toastr.options = {
 }
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
+window.axios.defaults.baseURL = 'https://dev-xpream.gmf-aeroasia.co.id';
+
 
 if(localStorage.getItem('token'))
 {
     window.axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token')
 }
-
-let token = document.head.querySelector('meta[name="csrf-token"]')
-
-if (token) {
-    window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
-} else {
-    console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token')
-}
-
 
 /**
  * Echo exposes an expressive API for subscribing to channels and listening

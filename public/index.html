@@ -1,17 +1,452 @@
 <!DOCTYPE html>
-<html lang="">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
-    <title><%= htmlWebpackPlugin.options.title %></title>
-  </head>
-  <body>
-    <noscript>
-      <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
-    </noscript>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="author" content="PT. GMF AeroAsia, Tbk.">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <!-- title -->
+    <title>GMF AeroAsia - Excellent Project Management Stream</title>
+
+    <!-- favicon -->
+    <link rel="shortcut icon" href="<%= BASE_URL %>assets/img/favicon.png">
+
+    <!-- icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'/>
+    <!-- css -->
+    <link rel="stylesheet" href="<%= BASE_URL %>assets/vendor/bootstrap/css/dropdown.bootstrap.min.css">
+    <link rel="stylesheet" href="<%= BASE_URL %>assets/css/bootstrap.min.css">
+    <!-- <link rel="stylesheet" href="<%= BASE_URL %>assets/vendor/visjs/vis-timeline-graph2d.min.css"> -->
+    <link rel="stylesheet" href="<%= BASE_URL %>assets/vendor/metismenu/css/metismenu.min.css">
+    <!-- <link rel="stylesheet" href="<%= BASE_URL %>assets/vendor/datepicker/css/datepicker.min.css"> -->
+    <link rel="stylesheet" href="<%= BASE_URL %>assets/vendor/jquery-dropdown/css/jquery.dropdown.min.css">
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/css/select2.min.css"> -->
+    <link rel="stylesheet" href="<%= BASE_URL %>assets/vendor/bootoast/bootoast.min.css">
+    <link rel="stylesheet" href="<%= BASE_URL %>assets/vendor/owl.carousel/owl.carousel.min.css" />
+    <!-- <link rel="stylesheet" href="<%= BASE_URL %>assets/css/app.css"> -->
+
+    <!-- <link rel="stylesheet" href="<%= BASE_URL %>assets/plugins/gantt_chart/dhtmlxgantt_skyblue.css"> -->
+    <!-- <link rel="stylesheet" href="<%= BASE_URL %>assets/plugins/gantt_chart/custome.css"> -->
+    <link href="https://fonts.googleapis.com/css?family=Gochi+Hand" rel="stylesheet">
+
+    <link rel="stylesheet" href="<%= BASE_URL %>assets/plugins/toastr/toastr.min.css">
+    <link rel="stylesheet" href="<%= BASE_URL %>assets/css/vis-timeline-graph2d.min.css">
+
+
+    <link rel="stylesheet" href="<%= BASE_URL %>assets/fonts/skripsweet.css">
+    <link rel="stylesheet" href="<%= BASE_URL %>css/pace.css">
+
+
+
+    <style>
+
+        body {
+            zoom: 85%
+        }
+
+        .swal-modal .swal-text {
+            text-align: center;
+        }
+
+        .clickable {
+            cursor: pointer;
+        }
+
+        .vgt-left-align {
+            white-space: nowrap !important;
+        }
+
+        .table.vgt-table{
+            font-size: 9px !important; 
+            border-collapse: collapse !important;   
+            width: 100% !important;
+            max-width: 100% !important;
+            table-layout: auto !important;
+        }
+
+        .vgt-table.bordered td, .vgt-table.bordered th {
+            border: 1px solid #dcdfe6  !important;
+        }
+
+        .vgt-table td, .vgt-table th {
+            height: 20px  !important;
+            font-size: 9pt  !important;
+        }
+
+        .vgt-wrap__footer {
+            font-size: 9pt !important;
+            /* color: #606266; */
+            padding: 0.5em !important;
+            height: 35px !important;
+            /* background: -webkit-gradient(linear,left top, left bottom,from(#f4f5f8),to(#f1f3f6)) !important; */
+            /* background: linear-gradient(#f4f5f8,#f1f3f6) !important; */
+        }
+
+
+        .vgt-wrap__footer .footer__row-count__label {
+            font-size: 9pt !important;
+        }
+
+        .vgt-wrap__footer .footer__navigation__page-btn.disabled, .vgt-wrap__footer .footer__navigation__page-btn.disabled:hover {
+            opacity: .5 !important;
+            cursor: not-allowed !important;
+            box-shadow: 0 0 black !important;
+            font-size: 9pt !important;
+        }
+
+        .vgt-wrap__footer .footer__navigation__info, .vgt-wrap__footer .footer__navigation__page-info {
+            display: inline-block !important;
+            margin: 0 16px !important;
+            font-size: 9pt !important;
+        }
+
+        .vgt-wrap__footer .footer__navigation__page-btn {
+            text-decoration: none !important;
+            font-weight: 700 !important;
+            white-space: nowrap !important;
+            font-size: 9pt !important;
+        }
+
+        .vgt-global-search__input .input__icon .magnifying-glass {
+            margin-top: 8px !important;
+            margin-left: 10px !important;
+            display: block !important;
+            width: 12px !important;
+            height: 12px !important;
+            position: relative !important;
+            border-radius: 50% !important;
+        }
+
+        .vgt-input, .vgt-select{
+            font-size: 9pt !important;
+        }
+
+        .footer__row-count__label {
+            margin-top: -7px !important;
+        }
+
+        .footer__navigation{
+            margin-top: -2px !important;
+        }
+
+        .vgt-wrap__footer .footer__row-count__select {
+            margin-top: -5px !important;
+            width: 50px !important;
+            padding: 0px 15px 0px 5px;
+            border: 0px  !important;
+            border-radius: 0px !important;
+            font-weight: 700 !important;
+            font-size: 9pt !important;
+            margin-left: 0px !important;
+            height: 32px !important;
+            line-height: 32px !important;
+        }
+
+        .vgt-wrap__footer .footer__navigation__page-info__current-entry {
+            width: 50px !important;
+            text-align: center !important;
+            display: inline-block !important;
+            margin: 0 10px !important;
+            font-weight: 700 !important;
+            height: 25px !important;
+        }
+
+        .vgt-global-search {
+            background: #fff
+        }
+
+        .toolbar-default {
+            margin-bottom: 0px !important;
+        }
+
+        .is-data-label {
+            display: inline-block;
+            padding: 10px;
+            height: 20px;
+            width: 60px;
+            color: white;
+            font-size: 8pt !important;
+            text-align: center;
+        }
+
+        #backgroundLayer {
+            width: 300px;
+            display: block;
+            background-color: #000;
+            color: #fafafa;
+            height: 100%;
+        }
+
+        /* create a custom sized dot at the bottom of the red item */
+        .vis-item.red {
+            background-color: red;
+            border-color: darkred;
+            color: white;
+            font-family: monospace;
+            box-shadow: 0 0 10px gray;
+        }
+        .vis-item.vis-dot.red {
+            border-radius: 10px;
+            border-width: 10px;
+        }
+        .vis-item.vis-line.red {
+            border-width: 5px;
+        }
+        .vis-item.vis-box.red {
+            border-radius: 0;
+            border-width: 2px;
+            font-size: 24pt;
+            font-weight: bold;
+        }
+
+        .vis-item.green {
+            background-color: green;
+            border-color: #fff;
+            color: white;
+            font-family: monospace;
+            box-shadow: 0 0 10px gray;
+        }
+        .vis-item.vis-dot.green {
+            border-radius: 10px;
+            border-width: 10px;
+        }
+        .vis-item.vis-line.green {
+            border-width: 5px;
+        }
+        .vis-item.vis-box.green {
+            border-radius: 0;
+            border-width: 2px;
+            font-size: 24pt;
+            font-weight: bold;
+        }
+
+        .vis-item.yellow {
+            background-color: yellow;
+            border-color: #fff;
+            color: black;
+            font-family: monospace;
+            box-shadow: 0 0 10px gray;
+        }
+        .vis-item.vis-dot.yellow {
+            border-radius: 10px;
+            border-width: 10px;
+        }
+        .vis-item.vis-line.yellow {
+        border-width: 5px;
+        }
+        .vis-item.vis-box.yellow {
+            border-radius: 0;
+            border-width: 2px;
+            font-size: 24pt;
+            font-weight: bold;
+        }
+
+        .vis-item.orange {
+            background-color: gold;
+            border-color: orange;
+        }
+        .vis-item.vis-selected.orange {
+            /* custom colors for selected orange items */
+            background-color: orange;
+            border-color: orangered;
+        }
+
+        .vis-item.magenta {
+            background-color: magenta;
+            border-color: purple;
+            color: white;
+        }
+
+        /* our custom classes overrule the styles for selected events,
+        so lets define a new style for the selected events */
+        .vis-item.vis-selected {
+            background-color: white;
+            border-color: black;
+            color: black;
+            box-shadow: 0 0 10px gray;
+        }
+
+        #colheader {
+            /* width: 900px; */
+            display: block;
+            height: 100%;
+        }	
+
+        .tab-menu .tab-link.active {
+            margin-top: 1px !important;
+        }
+
+        .tooltiptext-x {
+            font-size: 10pt !important;
+        }
+
+        .tooltip-x .tooltiptext-x {
+            visibility: hidden !important;
+            width: 120px !important;
+            background-color: black !important;
+            color: #fff !important;
+            text-align: center !important;
+            border-radius: 6px !important;
+            padding: 5px 0 !important;
+            
+            /* Position the tooltip */
+            position: absolute !important;
+            z-index: 1 !important;
+            bottom: 100% !important;
+            left: 50% !important;
+            margin-left: -60px !important;
+            white-space: nowrap !important;
+        }
+
+        .tooltip-x:hover .tooltiptext-x {
+            visibility: visible !important;
+        }
+
+        ::v-deep .test {
+            border: 1px solid;
+        }
+
+        ::v-deep .test.one {
+            border-color: red;
+        }
+
+        ::v-deep .test.two {
+            border-color: blue;
+        }
+
+        ::v-deep .test.three {
+            border-color: green;
+        }
+
+        .w100{
+            width:100% !important;
+        }
+        .__ {
+        padding: 12px;
+        font-family: monospace;
+        background: #9c27b0;
+        color: #fff;
+        width: 361px;
+        display: block;
+        z-index: 999;
+        position: relative;
+        word-break: break-word;
+    }
+    .black-theme *{
+        background:#000 !important;color:white !important;
+    }
+    .black-theme .vgt-table thead th{
+        background:#000 !important;color:white !important;
+    }
+    .mb-1 {
+        margin-bottom: 10px;
+    }
+
+    .m0{
+       margin:unset !important; 
+    }
+    .mr5{
+        margin-right:5px;
+    }
+    *:not(.material-icons,[class^="icon-"]) {
+        /* font-family: system-ui !important; */
+    }
+    .ml5{
+        margin-left:5px;
+    }
+    </style>
+
+</head>
+
+<body class="sidebar-collapse">
+    
+  <noscript>
+    <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+  </noscript>
+  <div class="wrapper">
     <div id="app"></div>
-    <!-- built files will be auto injected -->
-  </body>
+  </div>
+    
+    <script src="<%= BASE_URL %>assets/vendor/jquery/jquery.min.js"></script>
+    <script src="<%= BASE_URL %>assets/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="<%= BASE_URL %>assets/vendor/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+    <script src="<%= BASE_URL %>assets/vendor/metismenu/js/metismenu.min.js"></script>
+    <script src="<%= BASE_URL %>assets/vendor/bootoast/bootoast.min.js"></script>
+    <script src="<%= BASE_URL %>assets/vendor/tippy/tippy.min.js"></script>
+    <script src="<%= BASE_URL %>assets/js/sidebar.js"></script>
+
+
+    <script src="<%= BASE_URL %>assets/vendor/chart.js/chart.min.js"></script>
+    <script src="<%= BASE_URL %>assets/vendor/chart.js/roundedBarCharts.js"></script>
+    <!-- <script src="<%= BASE_URL %>assets/vendor/highcharts/highcharts.js"></script> -->
+    <!-- <script src="<%= BASE_URL %>assets/vendor/highcharts/grouped-categories.js"></script> -->
+    <!-- <script src="https://unpkg.com/vis-timeline@6.3.1/dist/vis-timeline-graph2d.min.js"></script> -->
+    <script src="<%= BASE_URL %>assets/vendor/datepicker/js/datepicker.min.js"></script>
+
+    <script>
+
+        $('#metismenu').metisMenu();
+
+        function getCurrentDate() {
+            var today = new Date();
+            var dd = today.getDate();
+            var mm = today.getMonth()+1; //January is 0!
+            var yyyy = today.getFullYear();
+
+            if(dd < 10) {
+                dd = '0'+dd
+            } 
+
+            if(mm < 10) {
+                mm = '0'+mm
+            } 
+
+            today = yyyy + '-' + mm + '-' + dd;
+            return today;
+        }
+
+        function display_tooltip(target, text, placement = 'top') {
+            tippy(target, {
+                content: text,
+                arrow: true,
+                arrowType: 'sharp',
+                size: 'small',
+                animation: 'shift-away',
+                placement: placement,
+            });
+        }
+
+    </script>
+
+
+<script src="<%= BASE_URL %>assets/plugins/toastr/toastr.min.js"></script>
+<script src="<%= BASE_URL %>assets/js/pace.min.js"></script>
+
+<script src="<%= BASE_URL %>js/app.js?v=' . rand(00,99) ) }}"></script>
+
+<script>
+    $('#metisMenu').metisMenu()
+</script>
+<script src='<%= BASE_URL %>assets/js/select2.min.js'></script>
+<!-- <script src="http://export.dhtmlx.com/gantt/api.js"></script> -->
+
+<script src="<%= BASE_URL %>assets/js/script.js"></script>
+
+<script>
+    $('ul.tab-menu li').click(function () {
+        var tab_id = $(this).attr('data-tab');
+
+        $('ul.tab-menu li').removeClass('active');
+        $('.tab-content').removeClass('active');
+
+        $(this).addClass('active');
+        $("#" + tab_id).addClass('active');
+    });
+
+</script>
+</body>
 </html>

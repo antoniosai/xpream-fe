@@ -1,6 +1,9 @@
 require('./bootstrap');
 
 import Vue from 'vue'
+
+import App from './layouts/Main.vue'
+
 import store from './store'
 import apolloProvider from './apollo'
 import router from './router'
@@ -49,9 +52,9 @@ Vue.component('main-layout', require('./layouts/Main.vue').default);
 Vue.mixin(titleMixin)
 Vue.mixin(Permissions)
 
-const app = new Vue({
-    el: '#app',
-    router, store,
-	apolloProvider
-    // render: h => h(App)
-});
+new Vue({
+  
+  render: function (h) { return h(App) },
+  router, store,
+  apolloProvider
+}).$mount('#app');
