@@ -1,0 +1,249 @@
+<style>
+		.resource_marker{
+			text-align: center;
+			cursor: pointer;
+		}
+		.resource_marker div{
+			width: 28px;
+			height: 28px;
+			line-height: 29px;
+			display: inline-block;
+			border-radius: 15px;
+			color: #FFF;
+			margin: 3px;
+			font-size: 9pt;
+		}
+
+		.resource_marker.shift_one div {
+			background: #51c185;
+		}
+
+		.resource_marker.shift_two div{
+			background: #ff8686;
+		}
+</style>
+
+<template>
+  <div ref="gantt"></div>
+</template>
+
+<script>
+// import 'dhtmlx-gantt'
+import './datatable/gantt'
+import 'dhtmlx-gantt/codebase/ext/dhtmlxgantt_marker'
+import 'dhtmlx-gantt/codebase/dhtmlxgantt.css'
+import 'dhtmlx-gantt/codebase/skins/dhtmlxgantt_skyblue.css'
+
+export default {
+    name: 'gantt',
+    props: {
+        tasks: {
+            // type: Object,
+            default () {
+                return {
+                    data: [],
+                    links: []
+                }
+            }
+        },
+
+        columns: {
+            data: []
+        }
+    },
+
+    mounted: function () {
+        this.initGantt();
+
+        gantt.config.branch_loading = true;
+        gantt.config.date_format = "%Y-%m-%d %H:%i";
+        gantt.init(this.$refs.gantt)
+        gantt.parse(this.$props.tasks)
+    },
+
+    methods: {
+        initGantt: function () {
+            var today = new Date();
+            var dd = String(today.getDate()).padStart(2, '0');
+            var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+            var yyyy = today.getFullYear();
+
+            today = yyyy + '-' + mm + '-' + dd;
+
+            var date_to_str = gantt.date.date_to_str(gantt.config.task_date);
+            var today = new Date(today);
+            gantt.addMarker({
+                start_date: today,
+                css: "status_line",
+                text: "Today",
+                title: "Today"
+            });
+
+            var monthScaleTemplate = function (date) {
+                var dateToStr = gantt.date.date_to_str("%M");
+                return dateToStr(date);
+            };
+
+            var weekScaleTemplate = function (date) {
+                var dateToStr = gantt.date.date_to_str("%d");
+                return dateToStr(date);
+            };
+
+            gantt.config.scale_unit = "year";
+            gantt.config.date_scale = "%Y";
+            gantt.config.min_column_width = 50;
+            gantt.config.scale_height = 80;
+            gantt.config.drag_move = false;
+            gantt.config.drag_resize = false;
+            gantt.config.drag_links = false;
+            gantt.config.drag_progress = false;
+            gantt.config.drag_project = false;
+
+
+            gantt.config.subscales = [{
+                    unit: "month",
+                    step: 1,
+                    template: monthScaleTemplate
+                },
+                {
+                    unit: "day",
+                    step: 1,
+                    template: weekScaleTemplate
+                }
+            ];
+
+            gantt.config.sort = true;
+            gantt.templates.task_class = function (start, end, task) {
+                switch (task.level) {
+                    case "1":
+                        return "level_1";
+                        break;
+                    case "2":
+                        return "level_2";
+                        break;
+                    case "3":
+                        return "level_3";
+                        break;
+                }
+            };
+
+            gantt.config.columns = this.$props.columns
+
+            var resourceConfig = {
+                scale_height: 80,
+                columns: [{
+                    name: "name",
+                    label: "Shift",
+                    tree: true,
+                    template: function (resource) {
+                        return resource.label;
+                    }
+                }, ]
+            };
+
+            gantt.config.resource_store = "resource";
+            gantt.config.resource_property = "text";
+            gantt.config.order_branch = true;
+			gantt.config.open_tree_initially = true;
+			
+			gantt.templates.resource_cell_class = function(start, end, resource, task){
+				var css = [];
+				css.push("resource_marker");
+				if (resource.key == 1) {
+					css.push("shift_one");
+				} else {
+					css.push("shift_two");
+				}
+				return css.join(" ");
+			};
+			
+			gantt.templates.resource_cell_value = function(start, end, resource, task){
+				var html = "<div onclick='test()' style='color: black;' class='test'>Y</div>";
+				return html;
+			};
+
+			
+			gantt.config.resource_render_empty_cells = true;
+
+            gantt.config.layout = {
+                css: "gantt_container",
+                rows: [{
+                        cols: [{
+                                view: "grid",
+                                group: "grids",
+								scrollY: "scrollVer",
+                            },
+                            {
+                                resizer: true,
+                                width: 1
+                            },
+                            {
+                                view: "timeline",
+                                scrollX: "scrollHor",
+                                scrollY: "scrollVer"
+                            },
+                            {
+                                view: "scrollbar",
+                                id: "scrollVer",
+                                group: "vertical"
+                            }
+                        ],
+                        gravity: 2.5
+                    },
+                    {
+                        resizer: true,
+                        width: 1
+                    },
+                    {
+						config: resourceConfig,
+						cols: [
+							{view: "resourceGrid", group:"grids", width: 435, scrollY: "resourceVScroll" },
+							{resizer: true, width: 1},
+							{view: "resourceTimeline", scrollX: "scrollHor", scrollY: "resourceVScroll"},
+							{view: "scrollbar", id: "resourceVScroll", group:"vertical"}
+						],
+                        gravity: 1
+                    },
+                    {
+                        view: "scrollbar",
+                        id: "scrollHor"
+                    }
+                ]
+			};
+
+
+            var resourcesStore = gantt.createDatastore({
+                name: gantt.config.resource_store,
+                type: "treeDatastore",
+                initItem: function (item) {
+					item.id = item.key || gantt.uid();
+					return item;
+				}
+			});
+			
+			var tasksStore = gantt.getDatastore("task");
+			tasksStore.attachEvent("onStoreUpdated", function (id, item, mode) {
+				resourcesStore.refresh();
+			});
+
+            resourcesStore.parse([
+				{
+                    key: 1,
+                    label: "Shift 1",
+                },
+                {
+                    key: 2,
+                    label: "Shift 2",
+                }
+			]);
+        },
+    }
+}
+
+
+</script>
+
+
+<style>
+    @import "~dhtmlx-gantt/codebase/dhtmlxgantt.css";
+</style>

@@ -1,0 +1,228 @@
+<style scoped>
+::v-deep label {
+    font-size: 12px !important;
+}
+
+::v-deep .gantt_grid_scale .gantt_grid_head_cell {
+    color: rgb(75, 75, 75) !important;
+    border-right: 1px solid #cecece !important;
+}
+
+::v-deep .gantt_scale_cell { 
+    color: rgb(75, 75, 75) !important;
+    border-right: 1px solid #cecece !important;
+}
+
+::v-deep .status_line {
+    color: white !important;
+    background-color: red !important;
+    opacity: 1 !important;
+    
+}
+
+::v-deep .level_1 {
+    background-color: rgb(218, 119, 119) !important;
+    border: 2px solid rgb(218, 119, 119) !important;
+    color: rgb(218, 119, 119) !important;
+}
+
+::v-deep  .level_1 .gantt_task_progress {
+    background-color: #FF0018 !important;
+}
+
+::v-deep .level_2 {
+    background-color: #3aac5d !important;
+    border: 2px solid #3aac5d !important;
+    color: #3aac5d !important;
+
+}
+
+::v-deep  .level_2 .gantt_task_progress {
+    background-color: #008026 !important;
+}
+
+::v-deep .level_3 {
+    background-color: #2CBAD0 !important;
+    border: 2px solid #2CBAD0 !important;
+    color: #2CBAD0 !important;
+
+}
+
+::v-deep  .level_3 .gantt_task_progress {
+    background-color: #149CB0 !important;
+}
+
+
+</style>
+
+<template>
+    <div>
+        <div class="content-header"></div>
+        <div class="content-body">
+            <div class="card">
+                <div class="card-header no-border">
+                    <div class="title-area">
+                        <h3 class="title">{{ $route.meta.title }}</h3>
+                        <span class="subtitle total-project">{{ $route.meta.sub_title }}</span>
+                    </div>
+
+                    <div class="option-box">
+                        <div class="option-item">
+                            <span>Timeframe</span>
+                            <select class="by_timeframe">
+                                <option value="daily">Daily</option>
+                                <option value="weekly" selected="">Weekly</option>
+                                <option value="monthly">Monthly</option>
+                            </select>
+                        </div>
+                        <div class="option-item">
+                            <span>Level</span> 
+                            <select class="by_location">
+                                <option value="all">All Level</option> 
+                                <option value="1">1</option> 
+                                <option value="2">2</option> 
+                                <option value="3">3</option> 
+                                <option value="4">4</option>
+                            </select>
+                        </div>
+                        <div class="option-item">
+                            <span>Filter</span> 
+                            <input type="search" name="search" placeholder="Type and enter" class="by_search">
+                        </div>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div  class="">
+                        <template>
+                            <div  class="">
+                                
+                                <gantt v-if="founded" style="style='width:100%; height: 75vh; overflow-y: auto;" class="left-container" 
+                                    :columns="gantt.columns" 
+                                    :tasks="gantt.tasks">
+                                </gantt>
+                            </div>
+                            <table class="table table-condensed">
+                                <tbody>
+                                    <tr>
+                                        <td style="text-align: center"><b>Plan Level 1</b></td>
+                                        <td style="text-align: center"><b>Plan Level 2</b></td>
+                                        <td style="text-align: center"><b>Plan Level 3</b></td>
+                                        <td style="text-align: center"><b>Plan Progres</b></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div style="width:100%;height:15px;background:green;"></div>
+                                        </td>
+                                        <td>
+                                            <div style="width:100%;height:15px;background:yellow;"></div>
+                                        </td>
+                                        <td>
+                                            <div style="width:100%;height:15px;background:red;"></div>
+                                        </td>
+                                        <td>
+                                            <div style="width:100%;height:15px;background:grey;"></div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </template>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+
+import swal from 'sweetalert'
+import axios from 'axios'
+import Loading from 'vue-loading-overlay';
+import 'vue-loading-overlay/dist/vue-loading.css';
+
+import Gantt from './Gantt/Gantt.vue';
+
+export default {
+
+    components: {
+        Loading,
+        Gantt
+    },
+
+    computed: {
+        user() {
+            return JSON.parse(localStorage.getItem('user'))
+        }
+    },
+
+    data: () => ({
+        founded: false,
+        gantt: {
+            tasks: {
+                data: [
+                    {id: 1, text: 'Pre-Input', owner: 'Anton', start_date: '2020-01-04', duration: 27, progress: 0.8, level: '2'},
+                    {id: 2, text: 'Removal', owner: 'Saiful', start_date: '2020-01-10', duration: 4, progress: 0.4, level: '3'},
+                    {id: 3, text: 'Inspection', owner: 'Saiful', start_date: '2020-01-10', duration: 15, progress: 0.4, level: '1'}
+                ],
+
+                links: [
+                    {id: 1, source: 1, target: 2, type: '0'}
+                ]
+            },
+            columns:[
+                {
+                    name: "text",
+                    width: "150",
+                    align: "left",
+                    label: "Task Name",
+                    resize: true,
+                    tree: true
+                },
+                {
+                    name: "start_date",
+                    width: "90",
+                    align: "center",
+                    label: "Start Time"
+                },
+                // {
+                //     name: "owner",
+                //     width: "70",
+                //     align: "center",
+                //     label: "Owner"
+                // },
+                {
+                    name: "duration",
+                    width: "60",
+                    align: "center",
+                    label: "Duration"
+                },
+                {
+                    name:"add",        
+                    label:"" 
+                }
+            ],
+        },
+    }),
+
+    mounted() {
+        this.initGantt();
+    },
+
+    watch: {},
+
+    methods: {
+        initGantt: function() {
+            axios.get('/api/booking_and_submission/show_gantt/20180')
+            .then(res => {
+                this.gantt.tasks = res.data.data;
+                this.founded = true;
+            })
+            .catch(e => {
+                console.log("Error :" +e);
+            })
+        }
+    }
+
+}
+
+</script>

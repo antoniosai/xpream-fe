@@ -1,0 +1,104 @@
+.body {
+    padding: 50px;
+}
+
+.resource_marker{
+    text-align: center;
+    cursor: pointer;
+}
+.resource_marker div{
+    width: 28px;
+    height: 28px;
+    line-height: 29px;
+    display: inline-block;
+    border-radius: 15px;
+    color: #FFF;
+    margin: 3px;
+    font-size: 9pt;
+}
+
+.resource_marker.shift_one div {
+    background: #51c185;
+}
+
+.resource_marker.shift_two div{
+    background: #ff8686;
+}
+
+.action > i {
+    padding: 4px;
+    background: #fff;
+    border-radius: 5px;
+    font-size: 16px;
+    border: 1px solid #eaeaea;
+    -webkit-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.07);
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.07);
+    cursor: pointer;
+}
+
+.action > i.success {
+    color: white;
+    background-color: #13CE66;
+}
+
+.action > i.danger {
+    color: white;
+    background-color: #ee2455;
+}
+
+.action > i.warning {
+    color: white;
+    background-color: #158df7;
+}
+
+.gantt_grid_scale .gantt_grid_head_cell {
+    color: rgb(75, 75, 75) !important;
+    font-weight: bold !important;
+    border-right: 1px solid #cecece !important;
+}
+
+.gantt_scale_cell { 
+    color: rgb(75, 75, 75) !important;
+    font-weight: bold !important;
+    border-right: 1px solid #cecece !important;
+}
+
+.status_line {
+    color: white !important;
+    font-weight: bold !important;
+    background-color: red !important;
+    opacity: 1 !important;
+    
+}
+
+.level_1 {
+    background-color: rgb(218, 119, 119) !important;
+    border: 2px solid rgb(218, 119, 119) !important;
+    color: rgb(218, 119, 119) !important;
+}
+
+ .level_1 .gantt_task_progress {
+    background-color: #FF0018 !important;
+}
+
+.level_2 {
+    background-color: #3aac5d !important;
+    border: 2px solid #3aac5d !important;
+    color: #3aac5d !important;
+
+}
+
+ .level_2 .gantt_task_progress {
+    background-color: #008026 !important;
+}
+
+.level_3 {
+    background-color: #2CBAD0 !important;
+    border: 2px solid #2CBAD0 !important;
+    color: #2CBAD0 !important;
+
+}
+
+ .level_3 .gantt_task_progress {
+    background-color: #149CB0 !important;
+}

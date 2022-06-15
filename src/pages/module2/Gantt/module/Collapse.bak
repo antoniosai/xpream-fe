@@ -1,0 +1,52 @@
+<style>
+::v-deep .panel-toggle {
+    cursor: pointer;
+}
+
+::v-deep .panel-collapse-enter-active,
+.panel-collapse-leave-active{
+    transition: 200ms ease-out;
+    overflow: hidden;
+}
+
+::v-deep .panel-collapse-enter,
+.panel-collapse-leave-to  {
+    height: 0;
+    padding: 0 10px;
+    opacity: 0;
+}
+
+::v-deep .btn-panel-toggle {
+    cursor: pointer !important;
+}
+
+<div class="card">
+    <div class="card">
+        <div class="card-header">
+            <div class="btn-panel-toggle" v-on:click="handlerCollapse('btn-panel-desc', 'description')">
+                <i id="btn-panel-desc" class='material-icons'>
+                    keyboard_arrow_down
+                </i>
+                <div style="margin-top: -25px; margin-left: 23px;  "> Description </div>
+            </div> 
+        </div>
+        <transition v-show="panel.description" name="panel-collapse">
+            <div v-show="panel.description" class="card-content panel-body">
+                Content Card
+            </div>
+        </transition>
+    </div>
+</div>
+
+<script>
+    handlerCollapse: function(elem, name) {
+        let toogle = ["keyboard_arrow_right", "keyboard_arrow_down"];
+        this.panel[name] = !this.panel[name];
+
+        if(this.panel[name]) {
+            document.getElementById(elem).innerHTML = toogle[1];
+        }else{
+            document.getElementById(elem).innerHTML = toogle[0];
+        }
+    },
+</script>

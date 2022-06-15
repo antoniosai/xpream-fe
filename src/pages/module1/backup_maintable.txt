@@ -1,0 +1,171 @@
+<table id="tabl" class="is-striped" style="border-radius: 20px">
+                                        <thead>
+                                            <tr style="is-primary">
+                                                <th style="text-align: center">Report</th>
+                                                <th style="text-align: center">Slot<br>Cfrm</th>
+                                                <th class="is-center">Level</th>
+                                                <th>Sales ID</th>
+                                                <th>A/C Type</th>
+                                                <th>A/C Reg</th>
+                                                <th>Cust Code</th>
+                                                <th>AMS</th>
+                                                <th>Start Date</th>
+                                                <th>End Date</th>
+                                                <th style="text-align: center">D-Day</th>
+                                                <th style="text-align: center">WS</th>
+                                                <th style="text-align: center">COGS</th>
+                                                <th style="text-align: center">PROP</th>
+                                                <th style="text-align: center">PA</th>
+                                                <th style="text-align: center">SOW</th>
+                                                <th style="text-align: center">REV</th>
+                                                <th style="text-align: center">WBS</th>
+                                                <th style="text-align: center">SO</th>
+
+                                                <th style="text-align: center">Resched</th>
+                                                <th style="text-align: center">Remark</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="list in table.rows.data" :key="list.id">
+                                                <td
+                                                    style="text-align: center; position: -webkit-sticky; position: sticky;">
+                                                    <input type="checkbox" class="switch unset"
+                                                        @change="changeReport(list)" v-model="list.report">
+                                                </td>
+                                                <td style="text-align: center">
+
+                                                    <span class="is-label is-success clickable"
+                                                        v-on:click="hangarLineModal(list)"
+                                                        v-if="list.hangar_id && list.line_id">{{ list.hangar.name }} -
+                                                        {{ list.line.line_name }}</span>
+                                                    <div v-else>
+                                                        <span class="dot color_danger" v-if="list.difference < doc_due_date.hgr_danger" v-on:click="hangarLineModal(list)"></span>
+                                                        <span class="dot color_warning" v-else-if="list.difference <= doc_due_date.hgr_warning  && list.difference >= doc_due_date.hgr_danger" v-on:click="hangarLineModal(list)"></span>
+                                                        <span class="dot color_empty" v-else-if="list.difference > doc_due_date.hgr_warning" v-on:click="hangarLineModal(list)"></span>
+                                                    </div>
+                                                    <!-- <span class="dot color_warning" v-on:click="hangarLineModal(list)"
+                                                        v-if="!list.hangar_id && !list.line_id"></span>
+                                                    <span class="is-label is-success clickable" v-on:click="hangarLineModal(list)" v-else>{{ list.hangar.name }} -
+                                                        {{ list.line.line_name }}</span> -->
+                                                </td>
+                                                <td style="text-align: center">{{ list.level }}</td>
+                                                <td style="text-align: center">
+                                                    <span v-if="list.pg_id">{{ list.pg_id }}</span>
+                                                    <div v-else>
+                                                        <span class="dot color_danger" v-if="list.difference < doc_due_date.hgr_danger" v-on:click="hangarLineModal(list)"></span>
+                                                        <span class="dot color_warning" v-else-if="list.difference <= doc_due_date.hgr_warning  && list.difference >= doc_due_date.hgr_danger" v-on:click="hangarLineModal(list)"></span>
+                                                        <span class="dot color_empty" v-else-if="list.difference > doc_due_date.hgr_warning" v-on:click="hangarLineModal(list)"></span>
+                                                    </div>
+                                                </td>
+                                                <td style="text-align: center">{{ list.ac_type }}</td>
+                                                <td>{{ list.ac_reg }}</td>
+                                                <td style="text-align: center">{{ list.cust_code }}</td>
+                                                <td>{{ list.ams }}</td>
+                                                <td style="text-align: center;">{{ list.start_date }}</td> <!-- PO -->
+                                                <td style="text-align: center;">{{ list.end_date }}</td> <!-- PO -->
+                                                <td>{{ list.difference }} days</td>
+                                                <td style="text-align: center; width: 60px">
+
+                                                    <div v-if="list.upgrade_attachment.length != 0">
+                                                        <span class="dot color_success" v-on:click="wsModal(list)"></span>
+                                                    </div>
+                                                    <div v-else>
+                                                        <span class="dot color_danger" v-if="list.difference < doc_due_date.ws_danger" v-on:click="wsModal(list)"></span>
+                                                        <span class="dot color_warning" v-else-if="list.difference <= doc_due_date.ws_warning  && list.difference >= doc_due_date.ws_danger" v-on:click="wsModal(list)"></span>
+                                                        <span class="dot color_empty" v-else-if="list.difference > doc_due_date.ws_warning" v-on:click="wsModal(list)"></span>
+                                                    </div>
+                                                    <!-- {{ list.upgrade_attachment.length }} -->
+                                                </td> <!-- WS -->
+                                                <td style="text-align: center; width: 60px">
+
+                                                    <div v-if="list.cogs.length != 0">
+                                                        <span class="dot color_success" v-on:click="cogsModal(list)"></span>
+                                                    </div>
+                                                    <div v-else>
+                                                        <span class="dot color_danger" v-if="list.difference < doc_due_date.cogs_danger" v-on:click="cogsModal(list)"></span>
+                                                        <span class="dot color_warning" v-else-if="list.difference <= doc_due_date.cogs_warning  && list.difference >= doc_due_date.cogs_danger" v-on:click="cogsModal(list)"></span>
+                                                        <span class="dot color_empty" v-else-if="list.difference > doc_due_date.cogs_warning" v-on:click="cogsModal(list)"></span>
+                                                    </div>
+                                                    <!-- {{ list.upgrade_attachment.length }} -->
+                                                </td> <!-- COGS -->
+
+                                                <td style="text-align: center; width: 60px">
+
+                                                    <div v-if="list.proposal.length != 0">
+                                                        <span class="dot color_success"
+                                                            v-on:click="proposalModal(list)"></span>
+                                                    </div>
+                                                    <div v-else>
+                                                        <span class="dot color_danger" v-if="list.difference < doc_due_date.prop_danger" v-on:click="proposalModal(list)"></span>
+                                                        <span class="dot color_warning" v-else-if="list.difference <= doc_due_date.prop_warning  && list.difference >= doc_due_date.prop_danger" v-on:click="proposalModal(list)"></span>
+                                                        <span class="dot color_empty" v-else-if="list.difference > doc_due_date.prop_warning" v-on:click="proposalModal(list)"></span>
+                                                    </div>
+                                                    <!-- {{ list.upgrade_attachment.length }} -->
+                                                </td> <!-- Proposal -->
+                                                <td style="text-align: center; width: 60px">
+
+                                                    <div v-if="list.pa.length != 0">
+                                                        <span class="dot color_success" v-on:click="paModal(list)"></span>
+                                                    </div>
+                                                    <div v-else>
+                                                        <span class="dot color_danger" v-if="list.difference < doc_due_date.pa_danger" v-on:click="paModal(list)"></span>
+                                                        <span class="dot color_warning" v-else-if="list.difference <= doc_due_date.pa_warning  && list.difference >= doc_due_date.pa_danger" v-on:click="paModal(list)"></span>
+                                                        <span class="dot color_empty" v-else-if="list.difference > doc_due_date.pa_warning" v-on:click="paModal(list)"></span>
+                                                    </div>
+                                                    <!-- {{ list.upgrade_attachment.length }} -->
+                                                </td> <!-- PA -->
+                                                <td style="text-align: center; width: 60px">
+
+                                                    <div v-if="list.sow.length != 0">
+                                                        <span class="dot color_success" v-on:click="paModal(list)"></span>
+                                                    </div>
+                                                    <div v-else>
+                                                        <span class="dot color_danger" v-if="list.difference < doc_due_date.sow_danger" v-on:click="paModal(sowModal)"></span>
+                                                        <span class="dot color_warning" v-else-if="list.difference <= doc_due_date.sow_warning  && list.difference >= doc_due_date.sow_danger" v-on:click="sowModal(list)"></span>
+                                                        <span class="dot color_empty" v-else-if="list.difference > doc_due_date.sow_warning" v-on:click="sowModal(list)"></span>
+                                                    </div>
+                                                    <!-- {{ list.upgrade_attachment.length }} -->
+                                                </td> <!-- SOW -->
+                                                <td style="text-align: center">
+                                                    <div v-if="list.wbs">
+                                                        <span class="" v-on:click="revModal(list)">121</span>
+                                                    </div>
+                                                    <div v-else>
+                                                        <span class="dot color_danger" v-if="list.difference < doc_due_date.rev_danger" v-on:click="revModal(list)"></span>
+                                                        <span class="dot color_warning" v-else-if="list.difference <= doc_due_date.rev_warning  && list.difference >= doc_due_date.rev_danger" v-on:click="revModal(list)"></span>
+                                                        <span class="dot color_empty" v-else-if="list.difference > doc_due_date.rev_warning" v-on:click="revModal(list)"></span>
+                                                    </div>
+                                                </td>
+                                                <!-- Revision -->
+                                                <td style="text-align: center; width: 60px">
+
+                                                    <div v-if="list.wbs">
+                                                        <span class="" v-on:click="proposalModal(list)">121</span>
+                                                    </div>
+                                                    <div v-else>
+                                                        <span class="dot color_danger" v-if="list.difference < doc_due_date.wbs_danger" v-on:click="revModal(list)"></span>
+                                                        <span class="dot color_warning" v-else-if="list.difference <= doc_due_date.wbs_warning  && list.difference >= doc_due_date.wbs_danger" v-on:click="revModal(list)"></span>
+                                                        <span class="dot color_empty" v-else-if="list.difference > doc_due_date.wbs_warning" v-on:click="revModal(list)"></span>
+                                                    </div>
+                                                    <!-- {{ list.upgrade_attachment.length }} -->
+                                                </td> <!-- WBS -->
+
+                                                <td style="text-align: center">
+                                                    <span class="dot color_empty"></span>
+                                                </td> <!-- SO -->
+                                                <td style="text-align: center;">
+                                                    <span class="dot color_danger" v-if="list.reschedule && list.reschedule.status == 0 && (list.difference < doc_due_date.reschedule_danger)"  v-on:click="rescheduleModal(list, 'detail')"></span>
+                                                    <span class="dot color_empty" v-else-if="list.reschedule && list.reschedule.status == 0" v-on:click="rescheduleModal(list, 'detail')"></span>
+                                                    <span class="dot color_warning" v-else-if="list.reschedule && list.reschedule.status == 0 && (list.difference <= doc_due_date.reschedule_warning  && list.difference >= doc_due_date.reschedule_danger)" v-on:click="rescheduleModal(list, 'detail')"></span>
+                                                    <span class="dot color_success" v-else-if="list.reschedule && list.reschedule.status == 1" v-on:click="rescheduleModal(list, 'view')"></span>
+                                                    <span v-else></span>
+                                                </td> <!-- reschedule -->
+                                                <td style="text-align: center">
+                                                    <!-- <span class="label clickable" v-if="list.reschedule && list.reschedule.reject_remark" v-on:click="remarkModal(list)">Rejected</span>     -->
+                                                    <!-- <span v-else></span> -->
+                                                </td> <!-- Maint Doc -->
+
+                                            </tr>
+                                            
+                                        </tbody>
+                                    </table>

@@ -1,0 +1,339 @@
+<template>
+    <div>
+        <div class="content-header"></div>
+        <div class="content-body">
+            <div class="card">
+                <div class="card-header">
+                    <div class="title-area">
+                        <h3 class="title">Create Gantt Chart</h3>
+                        <span class="subtitle total-project">Sales ID <strong>#{{pg.pg_id }}</strong> | A/C Type : <strong>{{ pg.ac_type }}</strong> <span v-if="pg.hangar && pg.line">| Hangar-Line : <strong>{{ pg.hangar.name + '-' + pg.line.line_name }}</strong> </span> | A/C Reg : <strong>{{ pg.ac_reg }}</strong> | AMS : <strong>{{ pg.ams }}</strong></span>
+
+                    </div>
+                </div>
+                <div class="card-content">
+                    <loading 
+                        :active.sync="loading.isLoading" 
+                        :can-cancel="false"
+                        :is-full-page="false"
+                        :color="loading.color"
+                        :loader="loading.loaderType">
+                    </loading>
+
+                    <div v-if="!loading.isLoading">
+                        <div v-if="!pg.hasOwnProperty('pg_id')">
+                            <div class="alert is-focus">
+                                This Project / Planning Gate is not found !
+                                <div style="margin-top: 10px;">
+                                    <button v-on:click="$router.go(-1)" style="color:#fafafa; background-color: #f93232;" class="button is-small is-destructive">Turn me back</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-else>
+                            <div>
+                                <label>Gantt Data <span class="is-req">*</span></label>
+                                <div class="is-row">
+                                    <div class="form-item is-col">
+                                        <input disabled type="text" name="" :value="pg.pg_id" id="">
+                                        <div class="is-desc">PG ID</div>
+                                    </div>
+                                    <div class="form-item is-col">
+                                        <input disabled :value="pg.ac_type" type="text" name="" id="">
+                                        <div class="is-desc">Aircraft Type</div>
+                                    </div>
+                                    <div class="form-item is-col">
+                                        <input  v-on:change="handlerChangeStartDateGantt()" type="date" name="" id="gantt-start-date">
+                                        <div class="is-desc">Start Date</div>
+                                    </div>
+                                    <div class="form-item is-col">
+                                        <input v-on:change="handlerChangeEndDateGantt()" type="date" name="" id="gantt-end-date">
+                                        <div class="is-desc">End Date</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div v-for="role in roles" :key="role.ID" style="padding-bottom: 10px;">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <div class="title-area">
+                                            <label>{{role.PHASE_NAME}} <span class="is-req">*</span></label>                                        
+                                        </div>
+                                        <div class="option-box">
+                                            <div class="option-item">
+                                                <span>Start Dates</span> 
+                                                <input v-model="role.START_DATE" v-on:change="handlerChangeStartDatePhase('phase-start-date-' +role.ID, 'phase-end-date-' +role.ID, 'task-start-date-' +role.ID)" class="phase-start-date" :id="'phase-start-date-' +role.ID" disabled type="date" name="">
+                                            </div>
+                                            <div class="option-item">
+                                                <span>End Date</span> 
+                                                <input v-model="role.END_DATE" v-on:change="handlerChangeEndDatePhase('phase-start-date-' +role.ID, 'phase-end-date-' +role.ID, 'task-end-date-' +role.ID, 'task-start-date-' +role.ID)"  class="phase-end-date" :id="'phase-end-date-' +role.ID" disabled type="date" name="">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-content">
+                                        <div id="vueapp" class="vue-app">
+                                            <kendo-treeview>
+                                                <li v-for="task in role.TASK" :key="task.ID" data-expanded="false">
+                                                    <span class="k-icon k-i-group"></span>
+                                                    {{task.TASK_NAME}} [<b>{{task.AREA.length}}</b>]
+                                                    <ul>
+                                                        <div style="margin-top: 10px;">
+                                                            <div class="is-row" style="margin-bottom: 5px !important">
+                                                                <div class="form-item is-col">
+                                                                    <input v-model="task.START_DATE" v-on:change="handlerChangeStartDateTask('task-start-date-' +task.ID, 'task-end-date-' +task.ID, 'area-start-date-' +task.ID )" :class="'task-start-date-' +role.ID" :id="'task-start-date-' +task.ID" disabled type="date" name="">
+                                                                    <div  class="is-desc">Start Date</div>
+                                                                </div>
+                                                                <div class="form-item is-col">
+                                                                    <input v-model="task.END_DATE" v-on:change="handlerChangeEndDateTask('task-start-date-' +task.ID, 'task-end-date-' +task.ID, 'area-end-date-' +task.ID, 'area-start-date-' +task.ID)" :class="'task-end-date-' +role.ID" :id="'task-end-date-' +task.ID" disabled type="date" name="">
+                                                                    <div  class="is-desc">End Date</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div v-for="area in task.AREA" :key="area.ID" style="margin-left: 29px; margin-bottom: 8px; margin-top: -5px;">
+                                                            <span class="k-icon k-i-ungroup"></span> <b>{{area.AREA_NAME}}</b>
+                                                            <div style="margin-top: 7px; ">
+                                                                <div class="is-row" style="margin-bottom: 5px !important">
+                                                                    <div class="form-item is-col">
+                                                                        <input v-model="area.START_DATE" v-on:change="handlerChangeStartDateArea('area-start-date-' +area.ID, 'area-end-date-' +area.ID)" :class="'area-start-date-' +task.ID" :id="'area-start-date-' +area.ID"  disabled type="date" name="">
+                                                                        <div class="is-desc">Start Date</div>
+                                                                    </div>
+                                                                    <div class="form-item is-col">
+                                                                        <input v-model="area.END_DATE" :class="'area-end-date-' +task.ID" :id="'area-end-date-' +area.ID" disabled type="date" name="">
+                                                                        <div class="is-desc">End Date</div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </ul>
+                                                </li>
+                                            </kendo-treeview>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button v-on:click="handlerSaveGantt()">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+import Loading from 'vue-loading-overlay'
+import axios from 'axios'
+import 'vue-loading-overlay/dist/vue-loading.css'
+
+import Vue from 'vue'
+import '@progress/kendo-ui/js/kendo.treeview'
+import '@progress/kendo-theme-default/dist/all.css'
+
+import { TreeView,
+        TreeViewItem,
+        TreeViewInstaller } from '@progress/kendo-treeview-vue-wrapper'
+
+Vue.use(TreeViewInstaller)
+
+export default {
+    data: () => ({
+        pg: {},
+        pg_id: '',
+        roles: [],
+        form: {},
+        loading: {
+            isLoading: true,
+            fullPage: false,
+            loaderType: 'dots',
+            color: '#0065ff',
+        },
+    }),
+
+    components: {
+        Loading,
+        TreeView
+    },
+
+    mounted() {
+        this.pg_id = this.$route.params.pg_id,
+        this.getProject()
+    },
+
+    methods: {
+        getProject: function() {
+            this.loading.isLoading = true;
+            axios.get('/api/slot_and_capacity/planning_gate/show/' + this.pg_id)
+            .then( res => {
+                if (res.data.status == 'success') {
+                    this.pg = res.data.data;
+                    this.handlerGanttRole(this.handlerMapAircraft(this.pg.ac_type)) 
+                }
+                this.loading.isLoading = false;
+            })
+        },
+
+        handlerMapAircraft: function(ac_type) {
+            let mapped_ac = "";
+            if(ac_type.indexOf('-') !== -1 ) {
+                let splited_ac = ac_type.split('-');
+                mapped_ac = splited_ac[0] + "-" + splited_ac[1].charAt(0);
+            }else {
+                mapped_ac = ac_type;
+            }
+            return mapped_ac;
+        },
+
+        handlerGanttRole: function(ac_type){
+            axios.get('/api/booking_and_submission/get_gantt_role/' + ac_type)
+            .then(res => {
+                if(res.data.success) {
+                    this.roles = res.data.data;
+                }
+            })
+            .catch(e => {
+                console.log("Error: " +e);
+            })
+        },
+
+        handlerChangeStartDateGantt: function() {
+            let element = document.getElementsByClassName('phase-start-date');
+            let start_date = document.getElementById('gantt-start-date').value;
+            for(let i = 0; i < element.length; i++) {
+                element[i].disabled = false;
+                element[i].value = "";
+                element[i].setAttribute("min", start_date);
+            }
+
+            let end_date = document.getElementById("gantt-end-date");
+            end_date.value = '';
+            end_date.setAttribute("min", start_date);
+        },
+
+        handlerChangeEndDateGantt: function() {
+            let element = document.getElementsByClassName('phase-end-date');
+            let element_start = document.getElementsByClassName('phase-start-date');
+            let start_date = document.getElementById('gantt-start-date').value;
+            let end_date = document.getElementById('gantt-end-date').value;
+            for(let i = 0; i < element.length; i++) {
+                element[i].disabled = false;
+                element[i].value = "";
+                element_start[i].value = "";
+                element[i].setAttribute("min", start_date);
+                element[i].setAttribute("max", end_date);
+                element_start[i].setAttribute("max", end_date);
+            }
+        },
+
+        handlerChangeStartDatePhase: function(id_start_phase, id_end_phase, class_task) {
+            let element = document.getElementsByClassName(class_task);
+            let start_date = document.getElementById(id_start_phase).value;
+            let end_date = document.getElementById(id_end_phase);
+
+            for(let i = 0; i < element.length; i++) {
+                element[i].disabled = false;
+                element[i].value = "";
+                element[i].setAttribute("min", start_date);
+            }
+
+            end_date.value = "";
+            end_date.setAttribute("min", start_date)
+
+        },
+
+        handlerChangeEndDatePhase: function(id_start_phase, id_end_phase, class_task, class_start_task) {
+            let element = document.getElementsByClassName(class_task);
+            let element_start = document.getElementsByClassName(class_start_task);
+            let start_date = document.getElementById(id_start_phase).value;
+            let end_date = document.getElementById(id_end_phase).value;
+
+            for(let i = 0; i < element.length; i++) {
+                element[i].disabled = false;
+                element[i].value = "";
+                element_start[i].value = "";
+                element_start[i].setAttribute("max", end_date);
+                element[i].setAttribute("min", start_date);
+                element[i].setAttribute("max", end_date);
+            }
+        },
+
+        handlerChangeStartDateTask: function(id_start_task, id_end_task, class_area) {
+            let element = document.getElementsByClassName(class_area);
+            let start_date = document.getElementById(id_start_task).value;
+            let end_date = document.getElementById(id_end_task);
+
+            for(let i = 0; i < element.length; i++) {
+                element[i].disabled = false;
+                element[i].value = "";
+                element[i].setAttribute("min", start_date);
+            }
+
+            end_date.value = "";
+            end_date.setAttribute("min", start_date)
+        },
+
+        handlerChangeEndDateTask: function(id_start_task, id_end_task, class_area, class_start_area) {
+            let element = document.getElementsByClassName(class_area);
+            let element_start = document.getElementsByClassName(class_start_area);
+            let start_date = document.getElementById(id_start_task).value;
+            let end_date = document.getElementById(id_end_task).value;
+
+            for(let i = 0; i < element.length; i++) {
+                element[i].disabled = false;
+                element[i].value = "";
+                element_start[i].value = "";
+                element_start[i].setAttribute("max", end_date);
+                element[i].setAttribute("min", start_date);
+                element[i].setAttribute("max", end_date);
+            }
+        },
+
+        handlerChangeStartDateArea: function(id_start_area, id_end_area) {
+            let start_date = document.getElementById(id_start_area).value;
+            let end_date = document.getElementById(id_end_area);
+            end_date.value = "";
+            end_date.setAttribute("min", start_date)
+        },
+
+        handlerPreparePostData: function() {
+            this.form = {
+                PG_ID: this.pg.pg_id,
+                AC_TYPE: this.pg.ac_type,
+                START_DATE: document.getElementById('gantt-start-date').value,
+                END_DATE: document.getElementById('gantt-end-date').value,
+                MAPED_AC: this.handlerMapAircraft(this.pg.ac_type)
+            };
+        },
+
+        handlerSaveGantt: function() {
+            if(!this.validate()) return;
+
+            this.handlerPreparePostData();
+            axios.post('/api/booking_and_submission/create_gantt', {
+                data_gantt: this.form,
+                detail_gantt: this.roles,
+            })
+            .then(res => {
+                console.log(res);
+            })
+            .catch(e => {
+                console.log("Error: " +e);
+            })
+        },
+
+        validate: function() {
+            let start = document.getElementById("gantt-start-date").value;
+            let end = document.getElementById("gantt-end-date").value;
+
+            if(start == "") {
+                toastr.warning("Start date can't be empty");
+                return false;
+            }
+
+            if(end == "") {
+                toastr.warning("End date can't be empty");
+                return false;
+            }
+            return true;
+        }
+    }
+}
+
+</script>

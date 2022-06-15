@@ -1,0 +1,117 @@
+<vue-good-table theme="nocturnal" :columns="t_columns" :rows="t_rows" :search-options="t_options.search" :pagination-options="t_options.pagination" styleClass="vgt-table condensed">
+            <template slot="table-row" :doc_due_date="doc_due_date" slot-scope="props">
+                <span style="text-align: center; font-size: 11px" v-if="props.column.field == 'report'">
+                    <input type="checkbox" class="switch unset" @change="changeReport(props.row)" v-model="props.row.report">
+                </span>
+                <span style="text-align: center; font-size: 11px" v-if="props.column.field == 'slot_confirmation'">
+                    <span class="is-label is-success clickable"
+                        v-on:click="hangarLineModal(props.row)"
+                        v-if="props.row.hangar_id && props.row.line_id">{{ props.row.hangar.name }} -
+                        {{ props.row.line.line_name }}</span>
+                    <div v-else>
+                        <span class="dot color_danger" v-if="props.row.difference < doc_due_date.hgr_danger" v-on:click="hangarLineModal(props.row)"></span>
+                        <span class="dot color_warning" v-else-if="props.row.difference <= doc_due_date.hgr_warning  && props.row.difference >= doc_due_date.hgr_danger" v-on:click="hangarLineModal(props.row)"></span>
+                        <span class="dot color_empty" v-else-if="props.row.difference > doc_due_date.hgr_warning" v-on:click="hangarLineModal(props.row)"></span>
+                    </div>
+                </span>
+                <span style="text-align: center; font-size: 11px" v-if="props.column.field == 'level'">
+                    {{ props.row.level }}
+                </span>
+                <span style="text-align: center; font-size: 11px" v-if="props.column.field == 'pg_id'">
+                    {{ props.row.pg_id }}
+                </span>
+                <span style="text-align: center; font-size: 11px" v-if="props.column.field == 'ac_type'">
+                    {{ props.row.ac_type }}
+                </span>
+                <span style="text-align: center; font-size: 11px" v-if="props.column.field == 'ac_reg'">
+                    {{ props.row.ac_reg }}
+                </span>
+                <span style="text-align: center; font-size: 11px" v-if="props.column.field == 'cust_code'">
+                    {{ props.row.cust_code }}
+                </span>
+                <span style="text-align: center; font-size: 11px" v-if="props.column.field == 'ams'">
+                    {{ props.row.ams }}
+                </span>
+                <span style="text-align: center; font-size: 11px" v-if="props.column.field == 'start_date'">
+                    {{ props.row.start_date }}
+                </span>
+                <span style="text-align: center; font-size: 11px" v-if="props.column.field == 'end_date'">
+                    {{ props.row.end_date }}
+                </span>
+                <span style="text-align: center; font-size: 11px" v-if="props.column.field == 'TAT'">
+                    {{ props.row.TAT }}
+                </span>
+                <span style="text-align: center; font-size: 11px" v-if="props.column.field == 'difference'">
+                    {{ props.row.difference }}
+                </span>
+                <span style="text-align: center; font-size: 11px" v-if="props.column.field == 'ws'">
+                    <div v-if="Array.isArray(props.row.upgrade_attachment) && props.row.upgrade_attachment.length">
+                        <span class="dot color_success" v-on:click="wsModal(props.row)"></span>
+                    </div>
+                    <div v-else>
+                        <span class="dot color_danger" v-if="props.row.difference < doc_due_date.ws_danger" v-on:click="wsModal(props.row)"></span>
+                        <span class="dot color_warning" v-else-if="props.row.difference <= doc_due_date.ws_warning  && props.row.difference >= doc_due_date.ws_danger" v-on:click="wsModal(prop.row)"></span>
+                        <span class="dot color_empty" v-else-if="props.row.difference > doc_due_date.ws_warning" v-on:click="wsModal(props.row)"></span>
+                    </div>
+                </span>
+                <span v-if="props.column.field == 'cogs'">
+                    <div v-if="Array.isArray(props.row.cogs) && props.row.cogs.length">
+                        <span class="dot color_success" v-on:click="cogsModal(props.row)"></span>
+                    </div>
+                    <div v-else>
+                        <span class="dot color_danger" v-if="props.row.difference < doc_due_date.cogs_danger" v-on:click="cogsModal(props.row)"></span>
+                        <span class="dot color_warning" v-else-if="props.row.difference <= doc_due_date.cogs_warning  && props.row.difference >= doc_due_date.cogs_danger" v-on:click="cogsModal(prop.row)"></span>
+                        <span class="dot color_empty" v-else-if="props.row.difference > doc_due_date.cogs_warning" v-on:click="cogsModal(props.row)"></span>
+                    </div>
+                </span>
+                <span v-if="props.column.field == 'prop'">
+                    <div v-if="Array.isArray(props.row.prop) && props.row.prop.length">
+                        <span class="dot color_success"
+                            v-on:click="proposalModal(props.row)"></span>
+                    </div>
+                    <div v-else>
+                        <span class="dot color_danger" v-if="props.row.difference < doc_due_date.prop_danger" v-on:click="proposalModal(props.row)"></span>
+                        <span class="dot color_warning" v-else-if="props.row.difference <= doc_due_date.prop_warning  && props.row.difference >= doc_due_date.prop_danger" v-on:click="proposalModal(props.row)"></span>
+                        <span class="dot color_empty" v-else-if="props.row.difference > doc_due_date.prop_warning" v-on:click="proposalModal(props.row)"></span>
+                    </div>
+                </span>
+                <span v-if="props.column.field == 'pa'">
+                    <div v-if="Array.isArray(props.row.pa) && props.row.pa.length">
+                        <span class="dot color_success" v-on:click="paModal(props.row)"></span>
+                    </div>
+                    <div v-else>
+                        <span class="dot color_danger" v-if="props.row.difference < doc_due_date.pa_danger" v-on:click="paModal(props.row)"></span>
+                        <span class="dot color_warning" v-else-if="props.row.difference <= doc_due_date.pa_warning  && props.row.difference >= doc_due_date.pa_danger" v-on:click="paModal(props.row)"></span>
+                        <span class="dot color_empty" v-else-if="props.row.difference > doc_due_date.pa_warning" v-on:click="paModal(props.row)"></span>
+                    </div>
+                        <!-- {{ props.row.upgrade_attachment.length }} -->
+                </span>
+                <span v-if="props.column.field == 'sow'">
+                    <div v-if="Array.isArray(props.row.sow) && props.row.pa.sow">
+                        <span class="dot color_success" v-on:click="paModal(props.row)"></span>
+                    </div>
+                    <div v-else>
+                        <span class="dot color_danger" v-if="props.row.difference < doc_due_date.sow_danger" v-on:click="sowModal(props.row)"></span>
+                        <span class="dot color_warning" v-else-if="props.row.difference <= doc_due_date.sow_warning  && props.row.difference >= doc_due_date.sow_danger" v-on:click="sowModal(props.row)"></span>
+                        <span class="dot color_empty" v-else-if="props.row.difference > doc_due_date.sow_warning" v-on:click="sowModal(props.row)"></span>
+                    </div>
+                </span>
+                <span v-if="props.column.field == 'rev'">
+                    {{ props.row.difference }}
+                </span>
+                <span v-if="props.column.field == 'wbs'">
+                    {{ props.row.difference }}
+                </span>
+                <span v-if="props.column.field == 'so'">
+                    {{ props.row.difference }}
+                </span>
+                <span v-if="props.column.field == 'reschedule'">
+                    {{ props.row.difference }}
+                </span>
+                <span v-if="props.column.field == 'remark'">
+                    {{ props.row.difference }}
+                </span>
+                
+                
+            </template>
+        </vue-good-table>

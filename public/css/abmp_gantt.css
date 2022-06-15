@@ -1,0 +1,31 @@
+.level_1 {
+    background-color: #8bc34a !important;
+    border: 2px solid #8bc34a !important;
+    color: #ef5350 !important;
+}
+
+.level_1 .gantt_task_progress {
+    background-color: #8bc34a !important;
+}
+
+.level_2 {
+    background-color: #fbc02d !important;
+    border: 2px solid #fbc02d !important;
+    color: #fbc02d !important;
+}
+
+.level_2 .gantt_task_progress {
+    background-color: #fbc02d !important;
+}
+
+.level_3 {
+    background-color: #ef5350 !important;
+    border: 2px solid #ef5350 !important;
+    color: #ef5350 !important;
+
+}
+
+.level_3 .gantt_task_progress {
+    background-color: #ef5350 !important;
+}
+
